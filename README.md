@@ -1,3 +1,4 @@
+<img width="2890" height="1472" alt="Gemini_Generated_Image_g4qccdg4qccdg4qc" src="https://github.com/user-attachments/assets/09ef655b-3fb1-4da6-9f4e-844c99f9e9a6" />
 # دوائي — Dawae 💊
 ## تطبيق إدارة الأدوية المنزلية الذكي
 ## ✨ المميزات
