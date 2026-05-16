@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>دوائي – إدارة الأدوية المنزلية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #1a6b4a;
+      --primary-light: #27a86d;
+      --primary-dark: #0f4a33;
+      --accent: #e8f5ef;
+      --accent2: #f0faf5;
+      --danger: #e53935;
+      --warning: #f59e0b;
+      --info: #2196f3;
+      --bg: #f4f9f6;
+      --surface: #ffffff;
+      --text: #1a2e24;
+      --text-muted: #6b8a78;
+      --border: #d0e8dc;
+      --shadow: 0 4px 24px rgba(26,107,74,0.10);
+      --radius: 18px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── AUTH SCREEN ── */
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px 48px;
+      background: linear-gradient(160deg, #e8f5ef 0%, #f4f9f6 50%, #d0ede0 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-screen::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(39,168,109,0.12);
+      pointer-events: none;
+    }
+    .auth-screen::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(26,107,74,0.10);
+      pointer-events: none;
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 36px;
+      position: relative;
+    }
+    .auth-logo .icon-wrap {
+      width: 88px; height: 88px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+      border-radius: 28px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      box-shadow: 0 8px 32px rgba(26,107,74,0.30);
+    }
+    .auth-logo .icon-wrap svg { width: 52px; height: 52px; fill: white; }
+    .auth-logo h1 {
+      font-size: 2.2rem; font-weight: 900;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+    .auth-logo p {
+      font-size: 0.95rem; color: var(--text-muted);
+      margin-top: 4px; font-weight: 400;
+    }
+
+    .auth-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow), 0 2px 8px rgba(0,0,0,0.06);
+      padding: 32px 28px;
+      width: 100%; max-width: 420px;
+      position: relative;
+    }
+
+    .auth-tabs {
+      display: flex; gap: 0;
+      background: var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+    .auth-tab {
+      flex: 1; padding: 10px;
+      text-align: center; font-size: 0.95rem;
+      font-weight: 600; cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      color: var(--text-muted);
+      border: none; background: transparent;
+      font-family: 'Cairo', sans-serif;
+    }
+    .auth-tab.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(26,107,74,0.12);
+    }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; font-size: 0.9rem;
+      font-weight: 600; color: var(--text);
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%; padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 1rem; font-family: 'Cairo', sans-serif;
+      color: var(--text); background: var(--bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(39,168,109,0.12);
+      background: white;
+    }
+
+    .btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; width: 100%; padding: 14px;
+      border: none; border-radius: var(--radius-sm);
+      font-size: 1.05rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      font-family: 'Cairo', sans-serif;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      color: white;
+      box-shadow: 0 4px 16px rgba(26,107,74,0.28);
+    }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .auth-error {
+      background: #fce8e8; color: var(--danger);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 0.9rem; margin-bottom: 14px;
+      display: none;
+    }
+    .auth-error.show { display: block; }
+
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+
+    /* ── APP LAYOUT ── */
+    #app {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    #app.active { display: flex; }
+
+    /* Top header */
+    .app-header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: white; padding: 16px 20px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 16px rgba(26,107,74,0.25);
+    }
+    .app-header .brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .app-header .brand svg { width: 28px; height: 28px; fill: rgba(255,255,255,0.9); }
+    .app-header .brand span {
+      font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px;
+    }
+    .app-header .user-info {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .user-avatar {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.22);
+      border-radius: 50%; display: flex;
+      align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.95rem;
+    }
+    .logout-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white; padding: 6px 12px;
+      border-radius: 8px; font-size: 0.8rem;
+      cursor: pointer; font-family: 'Cairo', sans-serif;
+      transition: background 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* Main content */
+    .app-content {
+      flex: 1; padding: 20px 16px 100px;
+      max-width: 480px; margin: 0 auto; width: 100%;
+    }
+
+    /* Bottom nav */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white;
+      border-top: 1px solid var(--border);
+      display: flex; z-index: 100;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 10px 4px 8px;
+      cursor: pointer; transition: all 0.2s;
+      border: none; background: transparent;
+      color: var(--text-muted); font-family: 'Cairo', sans-serif;
+      font-size: 0.7rem; gap: 3px;
+    }
+    .nav-item svg { width: 22px; height: 22px; }
+    .nav-item.active { color: var(--primary); }
+    .nav-item.active svg path, .nav-item.active svg rect,
+    .nav-item.active svg circle { stroke: var(--primary); }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Dashboard */
+    .greeting {
+      margin-bottom: 20px;
+    }
+    .greeting h2 {
+      font-size: 1.4rem; font-weight: 800; color: var(--primary-dark);
+    }
+    .greeting p { font-size: 0.9rem; color: var(--text-muted); margin-top: 2px; }
+
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: white; border-radius: var(--radius);
+      padding: 18px 16px;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+      gap: 6px;
+    }
+    .stat-card.accent { background: linear-gradient(135deg, var(--primary-light), var(--primary)); color: white; }
+    .stat-card.warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+    .stat-card.danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+    .stat-card.info { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+    .stat-number { font-size: 2rem; font-weight: 900; line-height: 1; }
+    .stat-label { font-size: 0.8rem; font-weight: 600; opacity: 0.9; }
+
+    .section-title {
+      font-size: 1.05rem; font-weight: 700; color: var(--primary-dark);
+      margin-bottom: 12px; display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .section-title .badge {
+      background: var(--accent); color: var(--primary);
+      font-size: 0.75rem; padding: 3px 10px;
+      border-radius: 20px; font-weight: 600;
+    }
+
+    /* Alert cards */
+    .alert-card {
+      background: white; border-radius: var(--radius);
+      padding: 14px 16px; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border-right: 4px solid var(--border);
+    }
+    .alert-card.danger { border-color: var(--danger); }
+    .alert-card.warning { border-color: var(--warning); }
+    .alert-card.info { border-color: var(--info); }
+    .alert-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .alert-card.danger .alert-icon { background: #fce8e8; }
+    .alert-card.warning .alert-icon { background: #fef3c7; }
+    .alert-card.info .alert-icon { background: #dbeafe; }
+    .alert-body { flex: 1; }
+    .alert-body strong { font-size: 0.9rem; font-weight: 700; display: block; }
+    .alert-body span { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Medication list */
+    .med-card {
+      background: white; border-radius: var(--radius);
+      padding: 16px; margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .med-icon {
+      width: 46px; height: 46px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; flex-shrink: 0;
+      background: var(--accent);
+    }
+    .med-body { flex: 1; min-width: 0; }
+    .med-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .med-meta { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+    .med-actions {
+      display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;
+    }
+    .med-btn {
+      padding: 7px 12px; border-radius: 8px; border: none;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer;
+      font-family: 'Cairo', sans-serif; transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .med-btn.confirm {
+      background: var(--primary); color: white;
+    }
+    .med-btn.delete {
+      background: #fce8e8; color: var(--danger);
+    }
+
+    .qty-bar-wrap { margin-top: 8px; }
+    .qty-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;
+    }
+    .qty-bar {
+      height: 6px; background: #e5ede9; border-radius: 10px; overflow: hidden;
+    }
+    .qty-bar-fill {
+      height: 100%; border-radius: 10px;
+      background: linear-gradient(90deg, var(--primary-light), var(--primary));
+      transition: width 0.4s;
+    }
+    .qty-bar-fill.low { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .qty-bar-fill.critical { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+    /* Add medication form */
+    .add-form-card {
+      background: white; border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .add-form-title {
+      font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);
+      margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .tag-group {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;
+    }
+    .tag-btn {
+      padding: 7px 14px; border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: white; color: var(--text-muted);
+      font-size: 0.82rem; cursor: pointer;
+      font-family: 'Cairo', sans-serif; font-weight: 600;
+      transition: all 0.15s;
+    }
+    .tag-btn.active {
+      background: var(--accent); color: var(--primary);
+      border-color: var(--primary-light);
+    }
+
+    .btn-sm {
+      padding: 11px 20px; border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+    }
+
+    /* Prescription compare */
+    .compare-result {
+      border-radius: var(--radius); padding: 16px;
+      margin-top: 16px; display: none;
+    }
+    .compare-result.show { display: block; }
+    .compare-result.available { background: #e8f5ef; border: 1.5px solid var(--primary-light); }
+    .compare-result.not-available { background: #fce8e8; border: 1.5px solid var(--danger); }
+    .compare-result h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+    .compare-result ul { padding-right: 18px; font-size: 0.88rem; line-height: 1.8; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 48px 24px;
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon { font-size: 3.5rem; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .empty-state p { font-size: 0.9rem; line-height: 1.6; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--primary-dark); color: white;
+      padding: 12px 24px; border-radius: 30px;
+      font-size: 0.9rem; font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.20);
+      z-index: 9999; opacity: 0;
+      transition: all 0.3s; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Scrollable */
+    .scroll-list { overflow-y: auto; }
+
+    /* Reminder times */
+    .time-chips {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;
+    }
+    .time-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--accent); padding: 6px 12px;
+      border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+      color: var(--primary);
+    }
+    .time-chip button {
+      background: none; border: none; cursor: pointer;
+      color: var(--primary); font-size: 1rem; line-height: 1;
+      padding: 0; font-family: 'Cairo', sans-serif;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b8a78' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 12px center;
+    }
+
+    .profile-card {
+      background: white; border-radius: var(--radius);
+      padding: 24px 20px; box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .profile-avatar-lg {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 2rem; font-weight: 900;
+      color: white; margin: 0 auto 16px;
+    }
+    .profile-name { text-align: center; font-size: 1.2rem; font-weight: 800; }
+    .profile-email { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+    .info-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .info-row:last-child { border: none; }
+    .info-row .label { font-size: 0.88rem; color: var(--text-muted); font-weight: 500; }
+    .info-row .value { font-size: 0.95rem; font-weight: 700; }
+
+    /* Responsiveness */
+    @media (min-width: 480px) {
+      .app-content { padding: 24px 20px 100px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ AUTH SCREEN ═══ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-logo">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="8" width="40" height="48" rx="6" fill="rgba(255,255,255,0.25)"/>
+        <rect x="12" y="8" width="40" height="48" rx="6" fill="none" stroke="white" stroke-width="2.5"/>
+        <rect x="27" y="4" width="10" height="8" rx="3" fill="white"/>
+        <line x1="22" y1="26" x2="42" y2="26" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <line x1="32" y1="20" x2="32" y2="36" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <line x1="22" y1="40" x2="42" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="22" y1="46" x2="35" y2="46" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>دوائي</h1>
+    <p>نظام إدارة الأدوية المنزلية الذكي</p>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">تسجيل الدخول</button>
+      <button class="auth-tab" onclick="switchTab('register')">حساب جديد</button>
+    </div>
+
+    <!-- Login form -->
+    <div id="loginForm" class="auth-form active">
+      <div id="loginError" class="auth-error">البريد الإلكتروني أو كلمة المرور غير صحيحة</div>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="loginEmail" class="form-control" placeholder="example@email.com" />
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" onclick="login()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        دخول
+      </button>
+    </div>
+
+    <!-- Register form -->
+    <div id="registerForm" class="auth-form">
+      <div id="registerError" class="auth-error"></div>
+      <div class="form-group">
+        <label>الاسم الكامل</label>
+        <input type="text" id="regName" class="form-control" placeholder="أدخل اسمك" />
+      </div>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="regEmail" class="form-control" placeholder="example@email.com" />
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="regPassword" class="form-control" placeholder="6 أحرف على الأقل" />
+      </div>
+      <div class="form-group">
+        <label>تأكيد كلمة المرور</label>
+        <input type="password" id="regConfirm" class="form-control" placeholder="أعد كلمة المرور" />
+      </div>
+      <button class="btn btn-primary" onclick="register()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8zM19 8v6M22 11h-6"/></svg>
+        إنشاء حساب
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="8" width="40" height="48" rx="6" fill="none" stroke="white" stroke-width="2.5"/>
+        <rect x="27" y="4" width="10" height="8" rx="3" fill="white"/>
+        <line x1="22" y1="26" x2="42" y2="26" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <line x1="32" y1="20" x2="32" y2="36" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <line x1="22" y1="40" x2="42" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>دوائي</span>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar" id="headerAvatar">م</div>
+      <button class="logout-btn" onclick="logout()">خروج</button>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="app-content">
+
+    <!-- ── Dashboard ── -->
+    <div id="pageDashboard" class="page active">
+      <div class="greeting">
+        <h2 id="greetingText">مرحباً 👋</h2>
+        <p id="greetingDate"></p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card accent">
+          <div class="stat-number" id="statTotal">0</div>
+          <div class="stat-label">إجمالي الأدوية</div>
+        </div>
+        <div class="stat-card info">
+          <div class="stat-number" id="statToday">0</div>
+          <div class="stat-label">جرعات اليوم</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-number" id="statLow">0</div>
+          <div class="stat-label">يقترب النفاد</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-number" id="statExpiring">0</div>
+          <div class="stat-label">قريب الانتهاء</div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        التنبيهات
+        <span class="badge" id="alertCount">0</span>
+      </div>
+      <div id="alertsList"></div>
+
+      <div class="section-title" style="margin-top:20px;">
+        أدوية اليوم
+        <span class="badge" id="todayCount">0</span>
+      </div>
+      <div id="todayMeds"></div>
+    </div>
+
+    <!-- ── Medications List ── -->
+    <div id="pageMeds" class="page">
+      <div class="section-title" style="margin-bottom:16px;">
+        قائمة أدويتي
+        <span class="badge" id="medsCount">0</span>
+      </div>
+      <div id="medsList"></div>
+    </div>
+
+    <!-- ── Add Medication ── -->
+    <div id="pageAdd" class="page">
+      <div class="add-form-card">
+        <div class="add-form-title">
+          <span>➕</span> إضافة دواء جديد
+        </div>
+
+        <div class="form-group">
+          <label>اسم الدواء *</label>
+          <input type="text" id="medName" class="form-control" placeholder="مثال: أموكسيسيلين" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>الجرعة *</label>
+            <input type="text" id="medDose" class="form-control" placeholder="مثال: 500 مجم" />
+          </div>
+          <div class="form-group">
+            <label>شكل الدواء</label>
+            <select id="medForm" class="form-control">
+              <option value="💊">💊 حبة</option>
+              <option value="💉">💉 حقنة</option>
+              <option value="🧴">🧴 شراب</option>
+              <option value="💧">💧 نقط</option>
+              <option value="🩹">🩹 مرهم</option>
+              <option value="💨">💨 بخاخ</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>طريقة الاستخدام</label>
+          <div class="tag-group" id="useMethodGroup">
+            <button class="tag-btn active" data-val="قبل الأكل" onclick="selectTag(this,'useMethod')">قبل الأكل</button>
+            <button class="tag-btn" data-val="بعد الأكل" onclick="selectTag(this,'useMethod')">بعد الأكل</button>
+            <button class="tag-btn" data-val="مع الأكل" onclick="selectTag(this,'useMethod')">مع الأكل</button>
+            <button class="tag-btn" data-val="عند الحاجة" onclick="selectTag(this,'useMethod')">عند الحاجة</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>الكمية الإجمالية</label>
+            <input type="number" id="medQtyTotal" class="form-control" placeholder="مثال: 30" min="1" />
+          </div>
+          <div class="form-group">
+            <label>الكمية المتبقية</label>
+            <input type="number" id="medQtyLeft" class="form-control" placeholder="مثال: 30" min="0" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>تاريخ انتهاء الصلاحية *</label>
+          <input type="date" id="medExpiry" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label>مواعيد التذكير اليومية</label>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <input type="time" id="reminderTimeInput" class="form-control" style="flex:1;" />
+            <button class="btn btn-primary btn-sm" style="width:auto;padding:11px 16px;" onclick="addReminderTime()">+</button>
+          </div>
+          <div class="time-chips" id="reminderChips"></div>
+        </div>
+
+        <div class="form-group">
+          <label>ملاحظات إضافية</label>
+          <input type="text" id="medNotes" class="form-control" placeholder="أي ملاحظات على الدواء..." />
+        </div>
+
+        <button class="btn btn-primary" onclick="addMedication()">
+          حفظ الدواء
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Prescription Compare ── -->
+    <div id="pageCompare" class="page">
+      <div class="add-form-card">
+        <div class="add-form-title">
+          <span>🔍</span> مقارنة الوصفة الطبية
+        </div>
+        <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:18px;line-height:1.7;">
+          أدخل أسماء الأدوية الواردة في وصفتك الطبية الجديدة وسيتحقق التطبيق من مدى توفرها في مخزونك المنزلي.
+        </p>
+        <div class="form-group">
+          <label>أدوية الوصفة الجديدة (سطر لكل دواء)</label>
+          <textarea id="prescriptionInput" class="form-control" rows="5"
+            placeholder="أموكسيسيلين&#10;باراسيتامول&#10;فيتامين د"
+            style="resize:vertical;line-height:1.8;"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="comparePrescription()">
+          🔍 فحص الوصفة
+        </button>
+        <div id="compareResult" class="compare-result"></div>
+      </div>
+
+      <div class="add-form-card" style="margin-top:4px;">
+        <div class="add-form-title" style="margin-bottom:12px;">
+          <span>📦</span> مخزونك الحالي
+        </div>
+        <div id="inventoryList"></div>
+      </div>
+    </div>
+
+    <!-- ── Profile ── -->
+    <div id="pageProfile" class="page">
+      <div class="profile-card">
+        <div class="profile-avatar-lg" id="profileAvatar">م</div>
+        <div class="profile-name" id="profileName"></div>
+        <div class="profile-email" id="profileEmail"></div>
+      </div>
+
+      <div class="add-form-card">
+        <div class="add-form-title" style="margin-bottom:16px;"><span>📊</span> إحصائيات حسابي</div>
+        <div class="info-row">
+          <span class="label">إجمالي الأدوية المسجلة</span>
+          <span class="value" id="profileTotal">0</span>
+        </div>
+        <div class="info-row">
+          <span class="label">أدوية تقترب من النفاد</span>
+          <span class="value" id="profileLow" style="color:var(--warning)">0</span>
+        </div>
+        <div class="info-row">
+          <span class="label">أدوية قريبة الانتهاء</span>
+          <span class="value" id="profileExpiring" style="color:var(--danger)">0</span>
+        </div>
+        <div class="info-row">
+          <span class="label">تاريخ التسجيل</span>
+          <span class="value" id="profileJoined"></span>
+        </div>
+      </div>
+
+      <div class="add-form-card">
+        <div class="add-form-title" style="margin-bottom:16px;"><span>🗑️</span> إدارة البيانات</div>
+        <button class="btn" style="background:#fce8e8;color:var(--danger);font-weight:700;" onclick="clearAllMeds()">
+          حذف جميع الأدوية
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav0" onclick="navigate(0)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      الرئيسية
+    </button>
+    <button class="nav-item" id="nav1" onclick="navigate(1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        <line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/>
+      </svg>
+      أدويتي
+    </button>
+    <button class="nav-item" id="nav2" onclick="navigate(2)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      إضافة
+    </button>
+    <button class="nav-item" id="nav3" onclick="navigate(3)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+      </svg>
+      الوصفة
+    </button>
+    <button class="nav-item" id="nav4" onclick="navigate(4)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      حسابي
+    </button>
+  </nav>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
